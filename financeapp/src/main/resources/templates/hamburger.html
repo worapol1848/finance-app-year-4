@@ -1,0 +1,339 @@
+<!-- templates/hamburger.html -->
+<header class="header" id="header" th:fragment="hamburger(page)">
+    <nav class="nav-container" role="navigation" aria-label="เมนูหลัก">
+        <a th:href="@{/home}" class="logo">
+            <div class="logo-icon">F</div>
+            <h1>Finance App</h1>
+        </a>
+
+        <!-- ปุ่มที่กด Hamburger  -->
+        <button class="mobile-menu-btn" id="mobileMenuBtn"
+                aria-label="เปิด/ปิดเมนู" aria-controls="sidebar" aria-expanded="false">
+            <span class="hamburger-line"></span>
+            <span class="hamburger-line"></span>
+            <span class="hamburger-line"></span>
+        </button>
+    </nav>
+
+    <!-- เแภบมนู -->
+    <div class="new-menu" id="newMenu">
+        <a th:href="@{/home}" class="menu-item" th:classappend="${page}=='home' ? ' active' : ''">หน้าแรก</a>
+        <a th:href="@{/caluserinfo}" class="menu-item" th:classappend="${page}=='caluserinfo' ? ' active' : ''">ป้อนข้อมูลวางแผนการเงิน</a>
+        <a th:href="@{/exchange}" class="menu-item" th:classappend="${page}=='exchange' ? ' active' : ''">อัตราแลกเปลี่ยน</a>
+        <a th:href="@{/ourinfo}" class="menu-item" th:classappend="${page}=='ourinfo' ? ' active' : ''">เกี่ยวกับเรา</a>
+        <form th:action="@{/logout}" method="post" class="logout-form">
+            <button type="submit" class="menu-item logout-btn">ออกจากระบบ</button>
+        </form>
+    </div>
+
+    <!-- Overlay -->
+    <div class="overlay" id="overlay" aria-hidden="true"></div>
+
+    <style>
+        /* Import จาก Google Fonts */
+        @import url('https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap');
+        
+        *{margin:0;padding:0;box-sizing:border-box}
+        body.no-scroll{overflow:hidden}
+        
+
+        .logout-btn {
+            background: none;
+            border: none;
+            width: 100%;
+            text-align: left;
+            padding: 16px 20px;
+            font-family: 'Kanit', sans-serif;
+            font-weight: 500;
+            font-size: 15px;
+            color: #e74c3c;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .logout-btn:hover {
+            background: linear-gradient(135deg, #fceaea, #ffeaea);
+            color: #c0392b;
+            transform: translateX(4px);
+            box-shadow: 0 4px 12px rgba(231, 76, 60, 0.15);
+        }
+
+        .logout-btn::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 3px;
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            transform: scaleY(0);
+            transition: transform 0.3s ease;
+        }
+
+        .logout-btn:hover::before {
+            transform: scaleY(1);
+        }
+
+        /* Header ที่ปรับปรุงแล้ว */
+        .header{
+            background: rgba(255,255,255,0.98);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            box-shadow: 0 4px 32px rgba(0,0,0,0.08);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .nav-container{
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 70px;
+            padding: 0 24px;
+            max-width: 1400px;
+            margin: 0 auto;
+            position: relative;
+            width: 100%;
+        }
+        
+        .logo{
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            transition: transform 0.3s ease;
+        }
+        
+        .logo:hover {
+            transform: scale(1.02);
+        }
+        
+        .logo h1{
+            color: #2c3e50;
+            font-family: 'Kanit', sans-serif;
+            font-size: 24px;
+            font-weight: 600;
+            margin-left: 12px;
+            letter-spacing: -0.5px;
+        }
+        
+        .logo-icon{
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-weight: 700;
+            font-size: 18px;
+            box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        /* ปุ่มเบอร์เกอร์ขวาสุดพอดีๆ */
+        .mobile-menu-btn{
+            position: fixed;
+            top: 10px;
+            right: 24px;
+            width: 50px;
+            height: 50px;
+            background: #f8f9fa;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            z-index: 1001;
+            transition: all 0.3s ease;
+        }
+
+        .mobile-menu-btn:hover {
+            background: #e9ecef;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .hamburger-line{
+            width: 24px;
+            height: 4px;
+            background: #5C5C5C;
+            margin: 2px auto;
+            border-radius: 2px;
+            transition: all 0.3s ease;
+            display: block;
+        }
+
+        .mobile-menu-btn:hover .hamburger-line {
+            background: #666;
+        }
+
+        .mobile-menu-btn.active .hamburger-line:nth-child(1){
+            transform: rotate(45deg) translate(6px, 6px);
+            background: #e74c3c;
+            width: 28px;
+            height: 4px;
+        }
+        
+        .mobile-menu-btn.active .hamburger-line:nth-child(2){
+            opacity: 0;
+            transform: scaleX(0);
+        }
+        
+        .mobile-menu-btn.active .hamburger-line:nth-child(3){
+            transform: rotate(-45deg) translate(6px, -6px);
+            background: #e74c3c;
+            width: 28px;
+            height: 4px;
+        }
+
+        /* เมนูใหม่ขวาสุดพอดีๆ - Override ทุกอย่าง */
+        div.new-menu{
+            position: fixed !important;
+            top: 89px !important;
+            right: 24px !important;
+            left: auto !important;
+            width: 280px !important;
+            height: auto !important;
+            background: #ffffff !important;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.15) !important;
+            border-radius: 12px !important;
+            transition: all 0.3s ease !important;
+            z-index: 999 !important;
+            opacity: 0 !important;
+            transform: translateY(-10px) scale(0.95) !important;
+            padding: 8px 0 !important;
+            visibility: hidden !important;
+            margin: 0 !important;
+            display: block !important;
+        }
+        
+        div.new-menu.active{
+            opacity: 1 !important;
+            transform: translateY(0) scale(1) !important;
+            visibility: visible !important;
+        }
+
+        .menu-item{
+            display: block;
+            padding: 12px 20px;
+            text-decoration: none;
+            color: #495057;
+            font-family: 'Kanit', sans-serif;
+            font-weight: 500;
+            font-size: 15px;
+            transition: all 0.2s ease;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+            cursor: pointer;
+        }
+
+        .menu-item:hover{
+            background: #f8f9fa;
+            color: #3498db;
+        }
+
+        .menu-item.active{
+            background: #e3f2fd;
+            color: #3498db;
+            font-weight: 600;
+            border-right: 3px solid #3498db;
+        }
+
+        .menu-item.logout-btn{
+            color: #e74c3c;
+        }
+
+        .menu-item.logout-btn:hover{
+            background: #fceaea;
+            color: #c0392b;
+        }
+
+        .logout-form{
+            margin: 0;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 280px;
+                right: -280px;
+            }
+            
+            .nav-container {
+                padding: 0 16px;
+            }
+            
+            .logo h1 {
+                font-size: 20px;
+            }
+        }
+    </style>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const btn = document.getElementById('mobileMenuBtn');
+            const newMenu = document.getElementById('newMenu');
+
+            if (!btn || !newMenu) {
+                console.error('Hamburger menu elements not found');
+                return;
+            }
+
+            // ฟังก์ชันปิดเมนู
+            window.closeMenu = function(){
+                btn.classList.remove('active');
+                newMenu.classList.remove('active');
+                btn.setAttribute('aria-expanded','false');
+            }
+
+            // ฟังก์ชันเปิดเมนู
+            function openMenu(){
+                btn.classList.add('active');
+                newMenu.classList.add('active');
+                btn.setAttribute('aria-expanded','true');
+            }
+
+            // Event listener สำหรับปุ่มเบอร์เกอร์
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                newMenu.classList.contains('active') ? closeMenu() : openMenu();
+            });
+
+            // Event listener สำหรับลิงก์ในเมนู
+            document.querySelectorAll('.menu-item').forEach(item => {
+                item.addEventListener('click', (e) => {
+                    setTimeout(() => {
+                        closeMenu();
+                    }, 100);
+                });
+            });
+
+            // ปิดเมนูเมื่อกด ESC
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && newMenu.classList.contains('active')) {
+                    closeMenu();
+                }
+            });
+
+            // ปิดเมนูเมื่อคลิกข้างนอก
+            document.addEventListener('click', (e) => {
+                if (!btn.contains(e.target) && !newMenu.contains(e.target)) {
+                    closeMenu();
+                }
+            });
+        });
+    </script>
+</header>
